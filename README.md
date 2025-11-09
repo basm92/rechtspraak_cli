@@ -12,7 +12,7 @@ A command line interface to extract the Rechtspraak data through curl requests.
     - Fourth argument: Output file that stores the ECLI identifiers
 
 ```
-bash ./get_rechtspraak_id.sh 2020-04-01 2020-04-02 yes links.txt
+bash ./get_rechtspraak_id.sh 2022-02-01 2022-02-05 yes cases.txt
 ```
 
 2. Use `get_documents.sh` to get the actual transcriptions of the ruling. 
@@ -21,8 +21,10 @@ bash ./get_rechtspraak_id.sh 2020-04-01 2020-04-02 yes links.txt
     - Second argument: folder (to be created if nonexistent) storing the actual data of all the court cases. 1 file = 1 court case.
 
 ```
-bash ./get_documents links.txt output
+bash ./get_documents.sh cases.txt output
 ```
+
+3. Each of these court cases can serve as input in `inference.py` to get the structured output in the form of company names of companies involved in that particular court case, if any. 
 
 ### `uv` Environment
 
