@@ -25,6 +25,9 @@ bash ./get_documents.sh cases.txt output
 ```
 
 3. Each of these court cases can serve as input in `inference.py` to get the structured output in the form of company names of companies involved in that particular court case, if any. 
+    - For this to work, you need (i) a [Huggingface](huggingface.co) account
+    - (ii) A Huggingface access token
+    - (iii) To put that Huggingface access token in a `.env` file as `HF_TOKEN="[your token]"`. 
 
 ### `uv` Environment
 
