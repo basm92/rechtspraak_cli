@@ -26,7 +26,7 @@ if [[ ! $date1 =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ || ! $date2 =~ ^[0-9]{4}-[0-9]{2}
 fi
 
 # Base URL
-url="https://data.rechtspraak.nl/uitspraken/zoeken?type=uitspraak&date=$date1&date=$date2"
+url="https://data.rechtspraak.nl/uitspraken/zoeken?type=uitspraak&date=$date1&date=$date2&return=DOC"
 
 # Add subject parameter if civielRecht is "yes"
 if [ "$civielRecht" == "yes" ]; then
