@@ -24,3 +24,6 @@ bash ./get_rechtspraak_id.sh 2020-04-01 2020-04-02 yes links.txt
 bash ./get_documents links.txt output
 ```
 
+### `uv` Environment
+
+- To run the `inference.py` script, make sure to install the `uv` package manager and run `uv sync`. This will install and activate the necessary environment to run the script.
