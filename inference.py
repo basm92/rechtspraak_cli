@@ -1,42 +1,46 @@
-import os
-from openai import OpenAI
+import chatlas as ctl
 import xml.etree.ElementTree as ET
-from typing import List
+from typing import List, Optional
 from pydantic import BaseModel, Field
+import pathlib
 
 # Define pydantic Class
 class Company(BaseModel):
-    name: str = Field(description="The name of the company.")
+    name: Optional[str] = Field(
+        default=None,
+        description="The name of the company."
+    )
 
 class CompanyList(BaseModel):
-    companies: List[Company]
+    companies: List[Company] = Field(
+        default_factory=list,
+        description="A list of companies involved in the court case. Returns an empty list if none are found."
+    )
 
-# Find xml text of court case
-xml_file_path = 'output/ECLI:NL:GHARL:2022:763.xml'
+# Find xml text of court cases
+def parse_cc_text(file_path):
+    """
+    Parses the first 5000 characters of a court case.
+    """
+    tree = ET.parse(file_path)
+    root = tree.getroot()
+    court_case_text = "".join(root.itertext())
+    short_text = court_case_text[0:5000]
 
-# Read and parse the XML file to extract text
-tree = ET.parse(xml_file_path)
-root = tree.getroot()
-court_case_text = "".join(root.itertext())
+    return short_text
 
-# Access Huggingface
-client = OpenAI(
-    base_url="https://router.huggingface.co/v1",
-    api_key=os.environ["HF_TOKEN"],
+xml_files = pathlib.Path("output_230101_231001/").rglob("*.xml") # Assuming your files are XML
+results = [parse_cc_text(f) for f in xml_files]
+
+# Chatlas to process
+chat = ctl.ChatOpenAI(
+    model="gpt-5-nano",
+    system_prompt="You are an expert in court cases. You will be given a Dutch court case. You have to provide a list of company names which occur in the court cases as either a plaintiff or dependent, if any."
 )
 
-completion = client.responses.parse(
-    model="moonshotai/Kimi-K2-Instruct-0905",
-    input=[
-        {
-            "role": "system",
-            "content": "You are an expert in court cases. You will be given a Dutch court case. You have to provide a list of company names which occur in the court cases as either a plaintiff or dependent, if any."
-        }, {
-            "role": "user",
-            "content": court_case_text
-        }
-    ],
-    text_format=CompanyList,
-)
-
-print(completion.output_parsed)
+res = ctl.batch_chat_structured(
+    chat, 
+    prompts=results[1:5000], 
+    path='batch_state.json',
+    data_model=CompanyList
+    )
