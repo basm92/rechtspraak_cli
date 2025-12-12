@@ -1,6 +1,9 @@
 ## Rechtspraak CLI
 
-A command line interface to extract the Rechtspraak data through curl requests.
+A command line interface to extract the Rechtspraak data through curl requests. The tool has two dependencies:
+
+- `jq`: `sudo apt install jq`.
+- `xml2json`: `npm install -g xml2json-command` after `sudo apt install npm`. 
 
 ### How does it work?
 
