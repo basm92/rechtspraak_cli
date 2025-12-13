@@ -2,7 +2,13 @@ import chatlas as ctl
 import xml.etree.ElementTree as ET
 from typing import List, Optional
 from pydantic import BaseModel, Field
+import pandas as pd
+import json
 import pathlib
+
+# Helper
+def companylist(cl):
+    return [c.name for c in cl.companies]
 
 # Define pydantic Class
 class Company(BaseModel):
@@ -29,7 +35,7 @@ def parse_cc_text(file_path):
 
     return short_text
 
-xml_files = pathlib.Path("output_230101_231001/").rglob("*.xml") # Assuming your files are XML
+xml_files = list(pathlib.Path("output_230101_231001/").rglob("*.xml"))
 results = [parse_cc_text(f) for f in xml_files]
 
 # Chatlas to process
@@ -44,3 +50,15 @@ res = ctl.batch_chat_structured(
     path='batch_state.json',
     data_model=CompanyList
     )
+
+# Export to .json
+records = [
+    {
+        "filename": f.name,
+        "companies": companylist(r)
+    }
+    for f, r in zip(xml_files[1:5000], res)
+]
+
+with open("courtcases_companies.json", "w") as fh:
+    json.dump(records, fh, indent=2)
